@@ -16,12 +16,6 @@ const webtoon = [
     day: "목요일",
     name: "정글쥬스",
   },
-
-  {
-    id: 3,
-    day: "금요일",
-    name: "광마회귀",
-  },
 ];
 
 app.get("/webtoon", (req, res) => {
@@ -53,6 +47,31 @@ app.post("/webtoon", (req, res) => {
   newitme.id = webtoon.length + 1;
   webtoon.push(newitme);
   res.status(200).json(newitme);
+});
+
+app.delete("/webtoon/:id", (req, res) => {
+  const itemId = parseInt(req.params.id, 10);
+  const itemIndex = webtoon.findIndex((i) => i.id === itemId);
+
+  if (itemIndex !== -1) {
+    webtoon.splice(itemIndex, 1);
+    res.status(204).send("데이터 삭제됨");
+  } else {
+    res.status(404).json({ message: "삭제할 데이터가 없음" });
+  }
+});
+
+app.put("/webtoon/:id", (req, res) => {
+  const itemId = parseInt(req.params.id, 10);
+  const itemIndex = webtoon.findIndex((i) => i.id === itemId);
+
+  if (itemIndex !== -1) {
+    const updatedItem = { ...webtoon[itemIndex + 1], ...req.body };
+    webtoon[itemIndex + 1] = updatedItem;
+    res.json(updatedItem);
+  } else {
+    res.status(404).json({ message: "업데이트 할 데이터가 없음." });
+  }
 });
 
 app.listen(PORT, () => {
